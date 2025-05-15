@@ -1,9 +1,8 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h1>Students</h1>
+<h2>Students</h2>
 <form method="GET">
-    <label>Filter by City:</label>
-    <input type="text" name="city" value="{{ city or '' }}">
+    <input type="text" name="city" placeholder="Filter by city">
     <button type="submit">Filter</button>
 </form>
 <table>
@@ -15,7 +14,7 @@
         <th>CGPA</th>
         <th>Depression</th>
     </tr>
-    {% for student in pagination.items %}
+    {% for student in students.items %}
     <tr>
         <td><a href="{{ url_for('main.student', id=student.id) }}">{{ student.id }}</a></td>
         <td>{{ student.gender }}</td>
@@ -24,21 +23,14 @@
         <td>{{ student.cgpa }}</td>
         <td>{{ 'Yes' if student.depression else 'No' }}</td>
     </tr>
+    {% else %}
+    <tr><td colspan="6">No students found</td></tr>
     {% endfor %}
 </table>
-<div>
-    {% if pagination.has_prev %}
-        <a href="{{ url_for('main.students', page=pagination.prev_num, city=city) }}">Previous</a>
-    {% endif %}
-    {% for p in pagination.iter_pages() %}
-        {% if p %}
-            <a href="{{ url_for('main.students', page=p, city=city) }}">{{ p }}</a>
-        {% else %}
-            ...
-        {% endif %}
-    {% endfor %}
-    {% if pagination.has_next %}
-        <a href="{{ url_for('main.students', page=pagination.next_num, city=city) }}">Next</a>
-    {% endif %}
-</div>
+{% if students.has_prev %}
+<a href="{{ url_for('main.students', page=students.prev_num, city=request.args.get('city')) }}">Previous</a>
+{% endif %}
+{% if students.has_next %}
+<a href="{{ url_for('main.students', page=students.next_num, city=request.args.get('city')) }}">Next</a>
+{% endif %}
 {% endblock %}

@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, abort
 from models.models import db, Student, LifestyleFactor
-from sqlalchemy import func
 import sqlalchemy.exc
 
 bp = Blueprint('main', __name__)
@@ -17,7 +16,7 @@ def students():
     if city:
         query = query.filter(Student.city == city)
     students = query.paginate(page=page, per_page=10)
-    print(f"Students found: {students.total}")
+    print(f"Students found: {students.total}")  # Debug
     return render_template('students.html', students=students)
 
 @bp.route('/student/<int:id>')
@@ -26,19 +25,23 @@ def student(id):
         student = Student.query.get_or_404(id)
         lifestyle = LifestyleFactor.query.filter_by(student_id=id).first()
         return render_template('student.html', student=student, lifestyle=lifestyle)
-    except sqlalchemy.exec.OperationalError:
+    except sqlalchemy.exc.OperationalError:
         abort(404)
 
 @bp.route('/analysis')
 def analysis():
-    city_depression = db.session.query(
-        Student.city,
-        db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
-    ).group_by(Student.city).all()
-    pressure_depression = db.session.query(
-        LifestyleFactor.academic_pressure,
-        db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
-    ).join(Student, Student.id == LifestyleFactor.student_id).group_by(LifestyleFactor.academic_pressure).all()
+    city_depression = db.session.execute(
+        db.select(
+            Student.city,
+            db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
+        ).group_by(Student.city)
+    ).all()
+    pressure_depression = db.session.execute(
+        db.select(
+            LifestyleFactor.academic_pressure,
+            db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
+        ).join(Student, Student.id == LifestyleFactor.student_id).group_by(LifestyleFactor.academic_pressure)
+    ).all()
     return render_template('analysis.html', city_depression=city_depression, pressure_depression=pressure_depression)
 
 @bp.app_errorhandler(404)
