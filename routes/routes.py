@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, abort
 from models.models import db, Student, LifestyleFactor
 from sqlalchemy import func
+import sqlalchemy.exc
 
 bp = Blueprint('main', __name__)
 
@@ -14,33 +15,35 @@ def students():
     city = request.args.get('city', None)
     query = Student.query
     if city:
-        query = query.filter_by(city=city)
-    pagination = query.paginate(page=page, per_page=50, error_out=False)
-    return render_template('students.html', pagination=pagination, city=city)
+        query = query.filter(Student.city == city)
+    students = query.paginate(page=page, per_page=10)
+    return render_template('students.html', students=students)
 
 @bp.route('/student/<int:id>')
 def student(id):
-    student = Student.query.get_or_404(id)
-    return render_template('student.html', student=student)
+    try:
+        student = Student.query.get_or_404(id)
+        lifestyle = LifestyleFactor.query.filter_by(student_id=id).first()
+        return render_template('student.html', student=student, lifestyle=lifestyle)
+    except sqlalchemy.exec.OperationalError:
+        abort(404)
 
 @bp.route('/analysis')
 def analysis():
-    # Depression rate by city
-    city_stats = db.session.query(
+    city_depression = db.session.query(
         Student.city,
-        func.avg(Student.depression.cast(db.Integer)).label('depression_rate')
+        db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
     ).group_by(Student.city).all()
-    # Depression by academic pressure
-    pressure_stats = db.session.query(
+    pressure_depression = db.session.query(
         LifestyleFactor.academic_pressure,
-        func.avg(Student.depression.cast(db.Integer)).label('depression_rate')
-    ).join(Student).group_by(LifestyleFactor.academic_pressure).all()
-    return render_template('analysis.html', city_stats=city_stats, pressure_stats=pressure_stats)
+        db.func.avg(db.cast(Student.depression, db.Integer)).label('depression_rate')
+    ).join(Student, Student.id == LifestyleFactor.student_id).group_by(LifestyleFactor.academic_pressure).all()
+    return render_template('analysis.html', city_depression=city_depression, pressure_depression=pressure_depression)
 
-@bp.errorhandler(404)
-def not_found(error):
-    return render_template('404.html', error=error), 404
+@bp.app_errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
-@bp.errorhandler(500)
-def server_error(error):
-    return render_template('500.html', error=error), 500
+@bp.app_errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
