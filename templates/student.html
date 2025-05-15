@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Student {{ student.id }}</h1>
+<p>Gender: {{ student.gender }}</p>
+<p>Age: {{ student.age }}</p>
+<p>City: {{ student.city }}</p>
+<p>Profession: {{ student.profession }}</p>
+<p>Degree: {{ student.degree }}</p>
+<p>CGPA: {{ student.cgpa }}</p>
+<p>Study Satisfaction: {{ student.study_satisfaction }}</p>
+<p>Depression: {{ 'Yes' if student.depression else 'No' }}</p>
+<p>Suicidal Thoughts: {{ 'Yes' if student.suicidal_thoughts else 'No' }}</p>
+<p>Family History of Mental Illness: {{ 'Yes' if student.family_history else 'No' }}</p>
+<h2>Lifestyle Factors</h2>
+<ul>
+    {% for factor in student.lifestyle_factors %}
+    <li>
+        Academic Pressure: {{ factor.academic_pressure }}<br>
+        Work Pressure: {{ factor.work_pressure }}<br>
+        Job Satisfaction: {{ factor.job_satisfaction }}<br>
+        Sleep Duration: {{ factor.sleep_duration }}<br>
+        Dietary Habits: {{ factor.dietary_habits }}<br>
+        Work/Study Hours: {{ factor.work_study_hours }}<br>
+        Financial Stress: {{ factor.financial_stress }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Mental Health Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('main.index') }}">Home</a> |
+        <a href="{{ url_for('main.students') }}">Students</a> |
+        <a href="{{ url_for('main.analysis') }}">Analysis</a>
+    </nav>
+    {% block content %}{% endblock %}
+</body>
+</html>
