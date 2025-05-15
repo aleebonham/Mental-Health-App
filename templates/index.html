@@ -1,6 +1,10 @@
 {% extends "base.html" %}
+{% block title %}Home{% endblock %}
 {% block content %}
-<h1>Student Mental Health Dashboard</h1>
-<p>Explore student depression trends based on demographics, academics, and lifestyle factors.</p>
-<p><a href="{{ url_for('main.students') }}">View Students</a> | <a href="{{ url_for('main.analysis') }}">View Analysis</a></p>
+    <h2>Welcome</h2>
+    <p>Explore student mental health data through our dashboard. View individual student details or analyze trends across cities and academic pressures.</p>
+    <div style="margin-top: 1rem;">
+        <a href="{{ url_for('main.students') }}" class="button">View Students</a>
+        <a href="{{ url_for('main.analysis') }}" class="button">View Analysis</a>
+    </div>
 {% endblock %}

@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Depression Analysis</h1>
-    <h2>Depression by City</h2>
+{% extends "base.html" %}
+{% block title %}Analysis{% endblock %}
+{% block content %}
+    <h2>Depression Analysis</h2>
+    <h3>Depression by City</h3>
     {% if city_depression %}
         <table>
             <tr><th>City</th><th>Depression Rate</th></tr>
@@ -17,7 +13,7 @@
     {% else %}
         <p>No city depression data available.</p>
     {% endif %}
-    <h2>Depression by Academic Pressure</h2>
+    <h3>Depression by Academic Pressure</h3>
     {% if pressure_depression %}
         <table>
             <tr><th>Academic Pressure</th><th>Depression Rate</th></tr>
@@ -28,6 +24,5 @@
     {% else %}
         <p>No academic pressure depression data available.</p>
     {% endif %}
-    <a href="{{ url_for('main.index') }}">Back to Home</a>
-</body>
-</html>
+    <a href="{{ url_for('main.index') }}" class="button">Back to Home</a>
+{% endblock %}

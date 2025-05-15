@@ -1,28 +1,33 @@
 {% extends "base.html" %}
+{% block title %}Student Details{% endblock %}
 {% block content %}
-<h1>Student {{ student.id }}</h1>
-<p>Gender: {{ student.gender }}</p>
-<p>Age: {{ student.age }}</p>
-<p>City: {{ student.city }}</p>
-<p>Profession: {{ student.profession }}</p>
-<p>Degree: {{ student.degree }}</p>
-<p>CGPA: {{ student.cgpa }}</p>
-<p>Study Satisfaction: {{ student.study_satisfaction }}</p>
-<p>Depression: {{ 'Yes' if student.depression else 'No' }}</p>
-<p>Suicidal Thoughts: {{ 'Yes' if student.suicidal_thoughts else 'No' }}</p>
-<p>Family History of Mental Illness: {{ 'Yes' if student.family_history else 'No' }}</p>
-<h2>Lifestyle Factors</h2>
-<ul>
-    {% for factor in student.lifestyle_factors %}
-    <li>
-        Academic Pressure: {{ factor.academic_pressure }}<br>
-        Work Pressure: {{ factor.work_pressure }}<br>
-        Job Satisfaction: {{ factor.job_satisfaction }}<br>
-        Sleep Duration: {{ factor.sleep_duration }}<br>
-        Dietary Habits: {{ factor.dietary_habits }}<br>
-        Work/Study Hours: {{ factor.work_study_hours }}<br>
-        Financial Stress: {{ factor.financial_stress }}
-    </li>
-    {% endfor %}
-</ul>
+    <h2>Student Details</h2>
+    <table>
+        <tr><th>ID</th><td>{{ student.id }}</td></tr>
+        <tr><th>Gender</th><td>{{ student.gender }}</td></tr>
+        <tr><th>Age</th><td>{{ student.age }}</td></tr>
+        <tr><th>City</th><td>{{ student.city }}</td></tr>
+        <tr><th>Profession</th><td>{{ student.profession }}</td></tr>
+        <tr><th>Degree</th><td>{{ student.degree }}</td></tr>
+        <tr><th>CGPA</th><td>{{ student.cgpa }}</td></tr>
+        <tr><th>Study Satisfaction</th><td>{{ student.study_satisfaction }}</td></tr>
+        <tr><th>Depression</th><td>{{ 'Yes' if student.depression else 'No' }}</td></tr>
+        <tr><th>Suicidal Thoughts</th><td>{{ 'Yes' if student.suicidal_thoughts else 'No' }}</td></tr>
+        <tr><th>Family History</th><td>{{ 'Yes' if student.family_history else 'No' }}</td></tr>
+    </table>
+    {% if lifestyle %}
+        <h2>Lifestyle Factors</h2>
+        <table>
+            <tr><th>Academic Pressure</th><td>{{ lifestyle.academic_pressure }}</td></tr>
+            <tr><th>Work Pressure</th><td>{{ lifestyle.work_pressure }}</td></tr>
+            <tr><th>Job Satisfaction</th><td>{{ lifestyle.job_satisfaction }}</td></tr>
+            <tr><th>Sleep Duration</th><td>{{ lifestyle.sleep_duration }}</td></tr>
+            <tr><th>Dietary Habits</th><td>{{ lifestyle.dietary_habits }}</td></tr>
+            <tr><th>Work/Study Hours</th><td>{{ lifestyle.work_study_hours }}</td></tr>
+            <tr><th>Financial Stress</th><td>{{ lifestyle.financial_stress }}</td></tr>
+        </table>
+    {% else %}
+        <p>No lifestyle data available.</p>
+    {% endif %}
+    <a href="{{ url_for('main.students') }}" class="button">Back to Students</a>
 {% endblock %}
