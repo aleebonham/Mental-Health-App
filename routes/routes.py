@@ -17,6 +17,7 @@ def students():
     if city:
         query = query.filter(Student.city == city)
     students = query.paginate(page=page, per_page=10)
+    print(f"Students found: {students.total}")
     return render_template('students.html', students=students)
 
 @bp.route('/student/<int:id>')
