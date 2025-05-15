@@ -32,6 +32,12 @@ def student(id):
 @bp.route('/analysis')
 def analysis():
     try:
+        # Test raw counts
+        student_count = db.session.execute(select(func.count()).select_from(Student)).scalar()
+        lifestyle_count = db.session.execute(select(func.count()).select_from(LifestyleFactor)).scalar()
+        print(f"Student count: {student_count}")
+        print(f"LifestyleFactor count: {lifestyle_count}")
+
         city_depression = db.session.execute(
             select(
                 Student.city,
@@ -44,8 +50,8 @@ def analysis():
                 func.avg(cast(Student.depression, Integer)).label('depression_rate')
             ).join(Student, Student.id == LifestyleFactor.student_id).group_by(LifestyleFactor.academic_pressure)
         ).all()
-        print(f"City depression data: {city_depression}")  # Debug
-        print(f"Pressure depression data: {pressure_depression}")  # Debug
+        print(f"City depression data: {city_depression}")
+        print(f"Pressure depression data: {pressure_depression}")
         return render_template('analysis.html', city_depression=city_depression, pressure_depression=pressure_depression)
     except sqlalchemy.exc.OperationalError as e:
         print(f"Analysis error: {str(e)}")
